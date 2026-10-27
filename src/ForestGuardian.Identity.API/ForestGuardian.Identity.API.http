@@ -1,0 +1,6 @@
+@ForestGuardian.Identity.API_HostAddress = http://localhost:5048
+
+GET {{ForestGuardian.Identity.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
