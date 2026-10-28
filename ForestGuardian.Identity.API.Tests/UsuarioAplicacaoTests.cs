@@ -1,6 +1,5 @@
 ﻿using ForestGuardian.Identity.API.Models;
 using ForestGuardian.Identity.API.Models.Enums;
-using Xunit;
 
 namespace ForestGuardian.Identity.API.Tests;
 

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 18
-VisualStudioVersion = 18.11.12324.101 stable
+VisualStudioVersion = 18.11.12324.101
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ForestGuardian.API", "src\ForestGuardian.API\ForestGuardian.API.csproj", "{9BA2487E-60FF-41A9-A119-B5CCD0E3EA52}"
 EndProject
@@ -10,6 +10,12 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Identity", "Identity", "{495B4911-6610-4BCD-8734-EB9000DDBBC3}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ForestGuardian.Identity.API.Tests", "ForestGuardian.Identity.API.Tests\ForestGuardian.Identity.API.Tests.csproj", "{43C4B661-8A94-413F-BAA2-981277332E34}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ForestGuardian.Domain", "src\ForestGuardian.Domain\ForestGuardian.Domain.csproj", "{EA21D50A-EC5C-4D48-998B-84953B6552D5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ForestGuardian.Infra", "src\ForestGuardian.Infra\ForestGuardian.Infra.csproj", "{5074CECB-761A-424E-A94D-2E01C85BE67E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ForestGuardian.Services", "src\ForestGuardian.Services\ForestGuardian.Services.csproj", "{DD862BF3-5009-4933-99E9-365670C1C963}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,6 +35,18 @@ Global
 		{43C4B661-8A94-413F-BAA2-981277332E34}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{43C4B661-8A94-413F-BAA2-981277332E34}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{43C4B661-8A94-413F-BAA2-981277332E34}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EA21D50A-EC5C-4D48-998B-84953B6552D5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EA21D50A-EC5C-4D48-998B-84953B6552D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EA21D50A-EC5C-4D48-998B-84953B6552D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EA21D50A-EC5C-4D48-998B-84953B6552D5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5074CECB-761A-424E-A94D-2E01C85BE67E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5074CECB-761A-424E-A94D-2E01C85BE67E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5074CECB-761A-424E-A94D-2E01C85BE67E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5074CECB-761A-424E-A94D-2E01C85BE67E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DD862BF3-5009-4933-99E9-365670C1C963}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DD862BF3-5009-4933-99E9-365670C1C963}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DD862BF3-5009-4933-99E9-365670C1C963}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DD862BF3-5009-4933-99E9-365670C1C963}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
