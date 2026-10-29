@@ -17,7 +17,7 @@ namespace ForestGuardian.Identity.API.Models
             else if(perfil != Perfil.AnalistaAmbiental && !string.IsNullOrEmpty(Crea))
                 return false;
 
-            if (!int.TryParse(Crea, out int numeroCrea))
+            if (!long.TryParse(Crea, out long numeroCrea))
                 return false;
 
             if (Crea?.Length >= 9 && Crea?.Length <= 11)
