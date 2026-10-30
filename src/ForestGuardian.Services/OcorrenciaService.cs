@@ -1,10 +1,11 @@
 ﻿using ForestGuardian.Domain.Entities;
 using ForestGuardian.Domain.Interfaces.Infra;
+using ForestGuardian.Domain.Interfaces.Service;
 using ForestGuardian.Domain.Models;
 
 namespace ForestGuardian.Services
 {
-    public class OcorrenciaService
+    public class OcorrenciaService : IOcorrenciaService
     {
         private readonly IOcorrenciaRepository _ocorrenciaRepository;
 
