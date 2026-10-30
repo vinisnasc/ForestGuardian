@@ -6,6 +6,7 @@ public abstract class BaseEntity
 {
     public Guid Id { get; protected set; }
     public ValidationResult ValidationResult { get; protected set; }
+    public DateTime DataCriacao { get; set; }
 
     public virtual bool EhValido()
     {

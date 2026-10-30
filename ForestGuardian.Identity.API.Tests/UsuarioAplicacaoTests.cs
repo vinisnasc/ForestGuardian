@@ -52,11 +52,9 @@ public class UsuarioAplicacaoTests
     }
 
     [Theory]
-    [InlineData("12333333", false)]
-    [InlineData("543254435", true)]
-    [InlineData("54325443533", true)]
-    [InlineData("543254435222", false)]
-    public void CreaValido_QuandoPerfilAnalistaAmbiental_ValidarTamanhoEntreNoveEOnze(string crea, bool resultadoEsperado)
+    [InlineData("543254435222")]
+    [InlineData("12333333")]
+    public void CreaInvalido_QuandoPerfilAnalistaAmbiental_DeveAceitarTamanhoEntreNoveEOnze(string crea)
     {
         // Arrange
         var usuario = new UsuarioAplicacao
@@ -68,7 +66,26 @@ public class UsuarioAplicacaoTests
         var resultado = usuario.CreaValido(Perfil.AnalistaAmbiental);
 
         // Assert
-        Assert.Equal(resultadoEsperado, resultado);
+        Assert.False(resultado);
+    }
+
+    [Theory]
+    [InlineData("543254435")]
+    [InlineData("0000000000")]
+    [InlineData("54325443533")]
+    public void CreaValido_QuandoPerfilAnalistaAmbiental_DeveAceitarTamanhoEntreNoveEOnze(string crea)
+    {
+        // Arrange
+        var usuario = new UsuarioAplicacao
+        {
+            Crea = crea
+        };
+
+        // Act
+        var resultado = usuario.CreaValido(Perfil.AnalistaAmbiental);
+
+        // Assert
+        Assert.Equal(true, resultado);
     }
 
     [Fact]

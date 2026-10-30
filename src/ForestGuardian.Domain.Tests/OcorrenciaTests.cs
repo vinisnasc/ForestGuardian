@@ -1,73 +1,110 @@
-﻿using ForestGuardian.Domain.Entities;
+﻿using Bogus;
+using ForestGuardian.Domain.Entities;
 using ForestGuardian.Domain.Enums;
 
 namespace ForestGuardian.Domain.Tests;
 
+[Collection(nameof(OcorrenciaCollection))]
 public class OcorrenciaTests
 {
-    [Fact]
+    private readonly OcorrenciaFixture _ocorrenciaFixture;
+
+    public OcorrenciaTests(OcorrenciaFixture ocorrenciaFixture) 
+    {
+        _ocorrenciaFixture = ocorrenciaFixture;
+    }
+
+    [Fact(DisplayName = "Ocorrencia com título acima do permitido não deve criar objeto")]
     public void Ocorrencia_TituloAcimaDoPermitido_NaoDeveCriarObjeto()
     {
-        Assert.Throws<ArgumentException>(() => new Ocorrencia("Um titulo com mais de 100 caracteres que excede o limite permitido Um titulo com mais de 100 caracteres que excede o limite permitido"
-                                      , "Descricao valida", 90, 90, Guid.NewGuid()));
+        Assert.Throws<ArgumentException>(() => new Ocorrencia(new Faker().Lorem.Letter(101)
+                                                            , _ocorrenciaFixture.GerarDescricaoValida()
+                                                            , _ocorrenciaFixture.GerarLatitudeValida()
+                                                            , _ocorrenciaFixture.GerarLongitudeValida()
+                                                            , Guid.NewGuid()));
     }
 
-    [Fact]
+    [Fact(DisplayName = "Ocorrencia com descrição acima do permitido não deve criar objeto")]
     public void Ocorrencia_DescricaoAcimaDoPermitido_NaoDeveCriarObjeto()
     {
-        Assert.Throws<ArgumentException>(() => new Ocorrencia("Titulo valido"
-                                      , "Descricao invalida com mais de 500 caracteres que excede o limite permitido Descricao invalida com mais de 500 caracteres que excede o limite permitido"
-                                      + "Descricao invalida com mais de 500 caracteres que excede o limite permitido Descricao invalida com mais de 500 caracteres que excede o limite permitido"
-                                      + "Descricao invalida com mais de 500 caracteres que excede o limite permitido Descricao invalida com mais de 500 caracteres que excede o limite permitido"
-                                      + "Descricao invalida com mais de 500 caracteres que excede o limite permitido Descricao invalida com mais de 500 caracteres que excede o limite permitido"
-                                      , 90, 90, Guid.NewGuid()));
+        Assert.Throws<ArgumentException>(() => new Ocorrencia(
+                                        _ocorrenciaFixture.GerarTituloValido()
+                                      , new Faker().Lorem.Letter(501)
+                                      , _ocorrenciaFixture.GerarLatitudeValida()
+                                      , _ocorrenciaFixture.GerarLongitudeValida()
+                                      , Guid.NewGuid()));
     }
 
-    [Fact]
+    [Fact(DisplayName = "Ocorrencia com valores válidos deve criar objeto")]
     public void Ocorrencia_ValoresValidos_DeveCriarObjeto()
     {
         // Arrange 
-        var ocorrencia = new Ocorrencia("Titulo valido", "Descricao valida", 90, 90 ,Guid.NewGuid());
+        var ocorrencia = _ocorrenciaFixture.GerarOcorrenciaValida();
 
         // Act
         var result = ocorrencia.EhValido();
 
         // Assert
         Assert.True(result);
-        Assert.Equal(0, ocorrencia.ValidationResult.Errors.Count);
+        Assert.Empty(ocorrencia.ValidationResult.Errors);
         Assert.IsType<Ocorrencia>(ocorrencia);
     }
 
-    [Fact]
+    [Fact(DisplayName = "Ocorrencia com valores válidos deve ter status criada como aberta")]
     public void Ocorrencia_ValoresValidos_StatusDeveSerCriadaComoAberta()
     {
         // Arrange & Act
-        var ocorrencia = new Ocorrencia("Titulo valido", "Descricao valida", 90, 90, Guid.NewGuid());
+        var ocorrencia = _ocorrenciaFixture.GerarOcorrenciaValida();
 
         // Assert
         Assert.True(ocorrencia.EhValido());
         Assert.Equal(StatusOcorrencia.Aberta, ocorrencia.StatusOcorrencia);
     }
 
-    [Fact]
-    public void Ocorrencia_ValoresInvalidos_NaoDeveCriarObjeto()
+    [Theory(DisplayName = "Ocorrencia com título nulo ou vazio não deve criar objeto")]
+    [InlineData("")]
+    [InlineData("       ")]
+    [InlineData(null)]
+    public void Ocorrencia_TitulosNulosOuVazios_NaoDeveCriarObjeto(string titulo)
     {
         // Arrange 
-        Assert.Throws<ArgumentException>(() => new Ocorrencia("    ", "Descricao valida", 90, 90, Guid.NewGuid()));
+        Assert.Throws<ArgumentException>(() => new Ocorrencia(titulo
+                                                            , _ocorrenciaFixture.GerarDescricaoValida()
+                                                            , _ocorrenciaFixture.GerarLatitudeValida()
+                                                            , _ocorrenciaFixture.GerarLongitudeValida()
+                                                            , Guid.NewGuid()));
     }
 
-    [Fact]
+    [Theory(DisplayName = "Ocorrencia com descrição nula ou vazia não deve criar objeto")]
+    [InlineData("")]
+    [InlineData("       ")]
+    [InlineData(null)]
+    public void Ocorrencia_DescricoesNulasOuVazias_NaoDeveCriarObjeto(string descricao)
+    {
+        // Arrange 
+        Assert.Throws<ArgumentException>(() => new Ocorrencia(_ocorrenciaFixture.GerarTituloValido()
+                                                            , descricao
+                                                            , _ocorrenciaFixture.GerarLatitudeValida()
+                                                            , _ocorrenciaFixture.GerarLongitudeValida()
+                                                            , Guid.NewGuid()));
+    }
+
+    [Fact(DisplayName = "Ocorrencia com usuário inválido não deve criar objeto")]
     public void Ocorrencia_UsuarioInvalido_NaoDeveCriarObjeto()
     {
         // Arrange 
-        Assert.Throws<ArgumentException>(() => new Ocorrencia("Titulo valido", "Descricao valida", 90, 90, Guid.Empty));
+        Assert.Throws<ArgumentException>(() => new Ocorrencia(_ocorrenciaFixture.GerarTituloValido()
+                                                            , _ocorrenciaFixture.GerarDescricaoValida()
+                                                            , _ocorrenciaFixture.GerarLatitudeValida()
+                                                            , _ocorrenciaFixture.GerarLongitudeValida()
+                                                            , Guid.Empty));
     }
 
-    [Fact]
+    [Fact(DisplayName = "Ocorrencia com dados válidos para alteração de status deve atualizar o status")]
     public void Ocorrencia_AlterarStatus_DeveAtualizarStatusOcorrencia()
     {
         // Arrange
-        var ocorrencia = new Ocorrencia("Titulo valido", "Descricao valida", 90, 90, Guid.NewGuid());
+        var ocorrencia = _ocorrenciaFixture.GerarOcorrenciaValida();
 
         // Act
         ocorrencia.AtualizarStatus(Enums.StatusOcorrencia.Resolvida);
@@ -76,11 +113,11 @@ public class OcorrenciaTests
         Assert.Equal(Enums.StatusOcorrencia.Resolvida, ocorrencia.StatusOcorrencia);
     }
 
-    [Fact]
+    [Fact(DisplayName = "Ocorrencia com dados inválidos para alteração de status não deve criar objeto")]
     public void AlterarStatus_ComDadosInvalidos_DeveGerarExcecao()
     {
         // Arrange
-        var ocorrencia = new Ocorrencia("Titulo valido", "Descricao valida", 90, 90, Guid.NewGuid());
+        var ocorrencia = _ocorrenciaFixture.GerarOcorrenciaValida();
 
         // Act & Assert
         Assert.Throws<ArgumentOutOfRangeException>(() => ocorrencia.AtualizarStatus((StatusOcorrencia)55));

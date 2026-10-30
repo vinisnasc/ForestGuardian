@@ -19,6 +19,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ForestGuardian.Services", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ForestGuardian.Domain.Tests", "src\ForestGuardian.Domain.Tests\ForestGuardian.Domain.Tests.csproj", "{1A7ADFBC-98C0-46B8-94F3-330BE2EC940E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ForestGuardian.Service.Tests", "src\ForestGuardian.Service.Tests\ForestGuardian.Service.Tests.csproj", "{04AA8DE5-CFA7-45D3-ABCC-798CB38F0EE8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -53,6 +55,10 @@ Global
 		{1A7ADFBC-98C0-46B8-94F3-330BE2EC940E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1A7ADFBC-98C0-46B8-94F3-330BE2EC940E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1A7ADFBC-98C0-46B8-94F3-330BE2EC940E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{04AA8DE5-CFA7-45D3-ABCC-798CB38F0EE8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{04AA8DE5-CFA7-45D3-ABCC-798CB38F0EE8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{04AA8DE5-CFA7-45D3-ABCC-798CB38F0EE8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{04AA8DE5-CFA7-45D3-ABCC-798CB38F0EE8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

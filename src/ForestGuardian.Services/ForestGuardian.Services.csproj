@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\ForestGuardian.Domain\ForestGuardian.Domain.csproj" />
+  </ItemGroup>
+
 </Project>
