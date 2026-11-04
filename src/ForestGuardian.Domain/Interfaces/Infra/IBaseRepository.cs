@@ -10,7 +10,7 @@ public interface IBaseRepository<T> : IDisposable where T : BaseEntity
     Task<List<T>> BuscarVarios(Expression<Func<T, bool>> predicate);
     Task<T> SelecionarPorId(Guid id);
 
-    void Incluir(T entity);
+    Task Incluir(T entity);
     void Alterar(T entity);
     void Remover(T entity);
 

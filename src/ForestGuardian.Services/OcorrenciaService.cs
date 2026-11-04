@@ -14,10 +14,10 @@ namespace ForestGuardian.Services
             _unitOfWork = unitOfWork;
         }
 
-        public void Adicionar(OcorrenciaInputModel model, Guid idUsuario)
+        public async Task Adicionar(OcorrenciaInputModel model, Guid idUsuario)
         {
             var entity = new Ocorrencia(model.Titulo, model.Descricao, model.Latitude, model.Longitude, idUsuario);
-            _unitOfWork.OcorrenciaRepository.Incluir(entity);
+            await _unitOfWork.OcorrenciaRepository.Incluir(entity);
         }
     }
 }

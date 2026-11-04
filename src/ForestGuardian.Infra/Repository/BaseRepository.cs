@@ -25,10 +25,11 @@ public class BaseRepository<T> : IBaseRepository<T> where T : BaseEntity
     public virtual async Task<List<T>> BuscarVarios(Expression<Func<T, bool>> predicate)
         => await _dbSet.Where(predicate).ToListAsync();
 
-    public virtual void Incluir(T entity)
+    public virtual async Task Incluir(T entity)
     {
         entity.DataCriacao = DateTime.Now;
         _dbSet.Add(entity);
+        await _context.SaveChangesAsync();
     }
 
     public virtual void Remover(T entity) => _dbSet.Remove(entity);

@@ -4,5 +4,5 @@ namespace ForestGuardian.Domain.Interfaces.Service;
 
 public interface IOcorrenciaService
 {
-    void Adicionar(OcorrenciaInputModel model, Guid idUsuario);
+    Task Adicionar(OcorrenciaInputModel model, Guid idUsuario);
 }
