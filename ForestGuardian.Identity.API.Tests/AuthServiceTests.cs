@@ -1,116 +1,132 @@
-﻿using ForestGuardian.Identity.API.Extensions;
-using ForestGuardian.Identity.API.Models;
+﻿using ForestGuardian.Identity.API.Models;
 using ForestGuardian.Identity.API.Services;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Moq;
 
 namespace ForestGuardian.Identity.API.Tests;
 
+[Collection(nameof(UsuarioCollection))]
 public class AuthServiceTests
 {
-    [Fact]
-    public async Task Login_EmailNaoCadastrado_DeveLancarExcecao()
+    private readonly UsuarioFixture _usuarioFixture;
+    private readonly AuthService _authService;
+
+    public AuthServiceTests(UsuarioFixture usuarioFixture)
+    {
+        _usuarioFixture = usuarioFixture;
+        _authService = _usuarioFixture.AuthService;
+    }
+
+    [Fact(DisplayName = "Login com dados corretos deve logar o usuário")]
+    public async Task Login_DadosCorretos_DeveLogar()
     {
         // Arrange
-        var userManager = CriarUserManagerMock();
-        var signInManager = CriarSignInManagerMock(userManager);
-
-        var configuracao = Options.Create(new IdentityConfiguration
+        UsuarioLogin usuarioLogin = new UsuarioLogin
         {
-            Secret = "uma-chave-de-teste-com-tamanho-suficiente-123456",
-            Emissor = "ForestGuardian",
-            ValidoEm = "ForestGuardian.Tests",
-            ExpiracaoHoras = 1
-        });
-
-        var service = new AuthService(configuracao, signInManager.Object, userManager.Object);
-
-        var model = new UsuarioLogin
-        {
-            Email = "inexistente@teste.com",
-            Senha = "Senha123!"
+            Email = "vini.souza00@gmail.com",
+            Senha = "123456Ab!"
         };
 
-        userManager.Setup(x => x.FindByEmailAsync(model.Email)).ReturnsAsync((UsuarioAplicacao?)null);
+        var usuario = _usuarioFixture.GerarUsuarioValido();
 
-        // Act
-        var excecao = await Assert.ThrowsAsync<Exception>(() => service.Login(model));
+        _usuarioFixture.MockUserManager.Setup(x => x.FindByEmailAsync(usuarioLogin.Email))
+                                       .ReturnsAsync(usuario);
 
-        // Assert
-        Assert.Equal("E-mail ou senha inválidos", excecao.Message);
+        _usuarioFixture.MockSignInManager.Setup(x => x.PasswordSignInAsync(usuario, usuarioLogin.Senha, false, true))
+                                         .ReturnsAsync(SignInResult.Success);
 
-        signInManager.Verify(
-            x => x.PasswordSignInAsync(
-                It.IsAny<UsuarioAplicacao>(),
-                It.IsAny<string>(),
-                It.IsAny<bool>(),
-                It.IsAny<bool>()),
-            Times.Never);
+        _usuarioFixture.MockUserManager.Setup(x => x.GetClaimsAsync(usuario)).ReturnsAsync(new List<System.Security.Claims.Claim>());
+
+        _usuarioFixture.MockUserManager.Setup(x => x.GetRolesAsync(usuario)).ReturnsAsync(new List<string>());
+
+        // act
+        var result = await _authService.Login(usuarioLogin);
+
+        // assert
+        Assert.NotNull(result);
+        Assert.False(string.IsNullOrEmpty(result.AccessToken));
+        _usuarioFixture.MockUserManager.Verify(x => x.FindByEmailAsync(usuarioLogin.Email), Times.Once);
+        _usuarioFixture.MockSignInManager.Verify(x => x.PasswordSignInAsync(usuario, usuarioLogin.Senha, false, true), Times.Once);
     }
 
-    private static Mock<UserManager<UsuarioAplicacao>>CriarUserManagerMock()
+    [Fact(DisplayName = "Login com email inexistente deve lançar exceção")]
+    public async Task Login_EmailInexistente_DeveLancarExcecao()
     {
-        var store = new Mock<IUserStore<UsuarioAplicacao>>();
+        // Arrange
+        UsuarioLogin usuarioLogin = new UsuarioLogin
+        {
+            Email = "vini.souza00@gmail.com",
+            Senha = "123456Ab!"
+        };
 
-        var options = Options.Create(new IdentityOptions());
+        _usuarioFixture.MockUserManager.Setup(x => x.FindByEmailAsync(usuarioLogin.Email))
+                                       .ReturnsAsync((UsuarioAplicacao)null);
 
-        var passwordHasher =
-            new Mock<IPasswordHasher<UsuarioAplicacao>>();
-
-        var userValidators =
-            Array.Empty<IUserValidator<UsuarioAplicacao>>();
-
-        var passwordValidators =
-            Array.Empty<IPasswordValidator<UsuarioAplicacao>>();
-
-        var keyNormalizer = new Mock<ILookupNormalizer>();
-        var errors = new IdentityErrorDescriber();
-        var services = new Mock<IServiceProvider>();
-
-        var logger =
-            new Mock<ILogger<UserManager<UsuarioAplicacao>>>();
-
-        return new Mock<UserManager<UsuarioAplicacao>>(
-            store.Object,
-            options,
-            passwordHasher.Object,
-            userValidators,
-            passwordValidators,
-            keyNormalizer.Object,
-            errors,
-            services.Object,
-            logger.Object);
+        // Act & Assert
+        await Assert.ThrowsAsync<Exception>(async () => await _authService.Login(usuarioLogin));
+        _usuarioFixture.MockSignInManager.Verify(x => x.PasswordSignInAsync(new UsuarioAplicacao(), usuarioLogin.Senha, false, true), Times.Never);
     }
 
-    private static Mock<SignInManager<UsuarioAplicacao>> CriarSignInManagerMock(Mock<UserManager<UsuarioAplicacao>> userManager)
+    [Fact(DisplayName = "Login com senha errada deve lançar exceção")]
+    public async Task Login_SenhaErrada_DeveLancarExcessao()
     {
-        var contextAccessor = new Mock<IHttpContextAccessor>();
+        // Arrange
+        UsuarioLogin usuarioLogin = new UsuarioLogin
+        {
+            Email = "vini.souza00@gmail.com",
+            Senha = "123456Ab!"
+        };
 
-        var claimsFactory =
-            new Mock<IUserClaimsPrincipalFactory<UsuarioAplicacao>>();
+        var usuario = _usuarioFixture.GerarUsuarioValido();
 
-        var options = Options.Create(new IdentityOptions());
+        _usuarioFixture.MockUserManager.Setup(x => x.FindByEmailAsync(usuarioLogin.Email))
+                                        .ReturnsAsync(usuario);
 
-        var logger =
-            new Mock<ILogger<SignInManager<UsuarioAplicacao>>>();
+        _usuarioFixture.MockSignInManager.Setup(x => x.PasswordSignInAsync(usuario, usuarioLogin.Senha, false, true))
+                                        .ReturnsAsync(SignInResult.Failed);
 
-        var schemes =
-            new Mock<IAuthenticationSchemeProvider>();
+        // assert & act
+        await Assert.ThrowsAsync<Exception>(async () => await _authService.Login(usuarioLogin));
+    }
 
-        var confirmation =
-            new Mock<IUserConfirmation<UsuarioAplicacao>>();
+    [Fact(DisplayName = "Resetar senha com email inexistente deve lançar exceção")]
+    public async Task ResetarSenha_EmailInexistente_DeveLancarExcessao()
+    {
+        // Arrange
+        var model = new UsuarioResetarSenha
+        {
+            Email = "vini.souza00@gmail.com"
+        };
 
-        return new Mock<SignInManager<UsuarioAplicacao>>(
-            userManager.Object,
-            contextAccessor.Object,
-            claimsFactory.Object,
-            options,
-            logger.Object,
-            schemes.Object,
-            confirmation.Object);
+        _usuarioFixture.MockUserManager.Setup(x => x.FindByEmailAsync(model.Email))
+                                       .ReturnsAsync((UsuarioAplicacao)null);
+
+        // Act & Assert
+        await Assert.ThrowsAsync<Exception>(async () => await _authService.ResetarSenha(model));
+    }
+
+    [Fact]
+    public async Task ResetarSenha_DadosCorretos_DeveResetarSenha()
+    {
+        // Arrange
+        var model = new UsuarioResetarSenha
+        {
+            Email = "vini.souza00@gmail.com",
+            Token = "abvcfdsgkfsgk",
+            NovaSenha = "novaSenha123!"
+        };
+
+        var usuario = _usuarioFixture.GerarUsuarioValido();
+
+        _usuarioFixture.MockUserManager.Setup(x => x.FindByEmailAsync(model.Email))
+                                       .ReturnsAsync(usuario);
+
+        _usuarioFixture.MockUserManager.Setup(x => x.ResetPasswordAsync(usuario, model.Token, model.NovaSenha))
+                                       .ReturnsAsync(IdentityResult.Success);
+
+        await _authService.ResetarSenha(model);
+
+        // Act & Assert
+        _usuarioFixture.MockUserManager.Verify(x => x.ResetPasswordAsync(usuario, model.Token, model.NovaSenha), Times.Once);
     }
 }

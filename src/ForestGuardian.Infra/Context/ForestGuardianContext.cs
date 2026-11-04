@@ -13,6 +13,14 @@ public class ForestGuardianContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+
+        foreach (var entityType in modelBuilder.Model.GetEntityTypes()
+                    .Where(x => typeof(BaseEntity).IsAssignableFrom(x.ClrType)))
+        {
+            modelBuilder.Entity(entityType.ClrType)
+                .Ignore(nameof(BaseEntity.ValidationResult));
+        }
+
         base.OnModelCreating(modelBuilder);
     }
 }

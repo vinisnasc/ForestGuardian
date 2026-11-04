@@ -7,17 +7,17 @@ namespace ForestGuardian.Services
 {
     public class OcorrenciaService : IOcorrenciaService
     {
-        private readonly IOcorrenciaRepository _ocorrenciaRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public OcorrenciaService(IOcorrenciaRepository ocorrenciaRepository)
+        public OcorrenciaService(IUnitOfWork unitOfWork)
         {
-            _ocorrenciaRepository = ocorrenciaRepository;
+            _unitOfWork = unitOfWork;
         }
 
         public void Adicionar(OcorrenciaInputModel model, Guid idUsuario)
         {
             var entity = new Ocorrencia(model.Titulo, model.Descricao, model.Latitude, model.Longitude, idUsuario);
-            _ocorrenciaRepository.Incluir(entity);
+            _unitOfWork.OcorrenciaRepository.Incluir(entity);
         }
     }
 }

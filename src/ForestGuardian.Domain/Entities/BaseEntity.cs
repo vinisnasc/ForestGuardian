@@ -1,4 +1,5 @@
 ﻿using FluentValidation.Results;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ForestGuardian.Domain.Entities;
 

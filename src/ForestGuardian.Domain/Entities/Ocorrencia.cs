@@ -13,6 +13,8 @@ namespace ForestGuardian.Domain.Entities
         public StatusOcorrencia StatusOcorrencia { get; private set; }
         public Guid IdUsuarioAberturaOcorrencia { get; private set; }
 
+        private Ocorrencia() { }
+
         public Ocorrencia(string titulo, string descricao, double latitude, double longitude, Guid idUsuarioAberturaOcorrencia)
         {
             Id = Guid.NewGuid();

@@ -24,14 +24,15 @@ public class OcorrenciaServiceTests
     {
         // Arrange
         var ocorrencia = _ocorrenciaFixture.GerarOcorrenciaValida();
-        var ocorrenciaRepository = new Mock<IOcorrenciaRepository>();
-        var ocorrenciaService = new OcorrenciaService(ocorrenciaRepository.Object);
+        var unitOfWorkMock = new Mock<IUnitOfWork>();
+        unitOfWorkMock.Setup(x => x.OcorrenciaRepository.Incluir(It.IsAny<ForestGuardian.Domain.Entities.Ocorrencia>()));
+        var ocorrenciaService = new OcorrenciaService(unitOfWorkMock.Object);
         var model = new OcorrenciaInputModel(ocorrencia.Titulo, ocorrencia.Descricao, ocorrencia.Coordenadas.Latitude, ocorrencia.Coordenadas.Longitude);
         
         // Act
         ocorrenciaService.Adicionar(model, ocorrencia.IdUsuarioAberturaOcorrencia);
 
         // Assert
-        ocorrenciaRepository.Verify(x => x.Incluir(It.IsAny<ForestGuardian.Domain.Entities.Ocorrencia>()), Times.Once);
+        unitOfWorkMock.Verify(x => x.OcorrenciaRepository.Incluir(It.IsAny<ForestGuardian.Domain.Entities.Ocorrencia>()), Times.Once);
     }
 }
