@@ -1,17 +1,38 @@
 ﻿using ForestGuardian.Domain.Entities;
 using ForestGuardian.Domain.Interfaces.Infra;
 using ForestGuardian.Domain.Interfaces.Service;
-using ForestGuardian.Domain.Models;
+using ForestGuardian.Domain.Models.InputModels;
+using ForestGuardian.Domain.Models.ViewModels;
+using System.Net;
 
 namespace ForestGuardian.Services
 {
-    public class OcorrenciaService : IOcorrenciaService
+    public class OcorrenciaService : BaseService, IOcorrenciaService
     {
         private readonly IUnitOfWork _unitOfWork;
 
-        public OcorrenciaService(IUnitOfWork unitOfWork)
+        public OcorrenciaService(INotificator notificator, IUnitOfWork unitOfWork) : base(notificator)
         {
             _unitOfWork = unitOfWork;
+        }
+
+        public async Task<IEnumerable<OcorrenciaViewModel>> BuscarTodos()
+        {
+            var ocorrencias = await _unitOfWork.OcorrenciaRepository.SelecionarTudo();
+            return ocorrencias.Select(x => new OcorrenciaViewModel(x.Id, x.Titulo, x.Descricao, x.Coordenadas, x.StatusOcorrencia));
+        }
+
+        public async Task<OcorrenciaViewModel> BuscarPorId(Guid id)
+        {
+            var ocorrencia = await _unitOfWork.OcorrenciaRepository.SelecionarPorId(id);
+
+            if (ocorrencia is null) 
+            {
+                Notificate("Não foi encontrado ocorrencia com o id informado!", HttpStatusCode.NotFound);
+                return null;
+            }
+
+            return new OcorrenciaViewModel(ocorrencia.Id, ocorrencia.Titulo, ocorrencia.Descricao, ocorrencia.Coordenadas, ocorrencia.StatusOcorrencia);
         }
 
         public async Task Adicionar(OcorrenciaInputModel model, Guid idUsuario)
@@ -19,5 +40,6 @@ namespace ForestGuardian.Services
             var entity = new Ocorrencia(model.Titulo, model.Descricao, model.Latitude, model.Longitude, idUsuario);
             await _unitOfWork.OcorrenciaRepository.Incluir(entity);
         }
+
     }
 }

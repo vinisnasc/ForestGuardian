@@ -1,25 +1,36 @@
 using ForestGuardian.Domain.Interfaces.Service;
-using ForestGuardian.Domain.Models;
+using ForestGuardian.Domain.Models.InputModels;
 using Microsoft.AspNetCore.Mvc;
 
-namespace ForestGuardian.API.Controllers
+namespace ForestGuardian.API.Controllers;
+
+public class OcorrenciaController : BaseController
 {
-    [ApiController]
-    [Route("[controller]")]
-    public class OcorrenciaController : ControllerBase
+    private readonly IOcorrenciaService _ocorrenciaService;
+
+    public OcorrenciaController(INotificator notificator, IOcorrenciaService ocorrenciaService) : base(notificator)
     {
-        private readonly IOcorrenciaService _ocorrenciaService;
+        _ocorrenciaService = ocorrenciaService;
+    }
 
-        public OcorrenciaController( IOcorrenciaService ocorrenciaService)
-        {
-            _ocorrenciaService = ocorrenciaService;
-        }
+    [HttpGet(Name = "buscarTodos")]
+    public async Task<IActionResult> BuscarTodos()
+    {
+        var ocorrencias = await _ocorrenciaService.BuscarTodos();
+        return CustomResponse(ocorrencias);
+    }
 
-        [HttpPost(Name = "cadastrar")]
-        public IActionResult Cadastrar(OcorrenciaInputModel model)
-        {
-            _ocorrenciaService.Adicionar(model, Guid.NewGuid());
-            return Ok();
-        }
+    [HttpGet("{id}", Name = "buscarPorId")]
+    public async Task<IActionResult> BuscarPorId(Guid id)
+    {
+        var ocorrencia = await _ocorrenciaService.BuscarPorId(id);
+        return CustomResponse(ocorrencia);
+    }
+
+    [HttpPost(Name = "cadastrar")]
+    public IActionResult Cadastrar(OcorrenciaInputModel model)
+    {
+        _ocorrenciaService.Adicionar(model, Guid.NewGuid());
+        return CustomResponse();
     }
 }

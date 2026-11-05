@@ -23,6 +23,7 @@ public static class DependencyInjectionConfiguration
     public static IServiceCollection AddServiceDependency(this IServiceCollection services)
     {
         services.AddScoped<IOcorrenciaService, OcorrenciaService>();
+        services.AddScoped<INotificator, Notificator>();
         return services;
     }
 

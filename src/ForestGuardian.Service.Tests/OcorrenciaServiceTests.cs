@@ -35,4 +35,5 @@ public class OcorrenciaServiceTests
         // Assert
         unitOfWorkMock.Verify(x => x.OcorrenciaRepository.Incluir(It.IsAny<ForestGuardian.Domain.Entities.Ocorrencia>()), Times.Once);
     }
+
 }
