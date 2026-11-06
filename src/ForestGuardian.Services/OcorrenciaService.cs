@@ -10,10 +10,12 @@ namespace ForestGuardian.Services
     public class OcorrenciaService : BaseService, IOcorrenciaService
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IUserService _userService;
 
-        public OcorrenciaService(INotificator notificator, IUnitOfWork unitOfWork) : base(notificator)
+        public OcorrenciaService(INotificator notificator, IUnitOfWork unitOfWork, IUserService userService) : base(notificator)
         {
             _unitOfWork = unitOfWork;
+            _userService = userService;
         }
 
         public async Task<IEnumerable<OcorrenciaViewModel>> BuscarTodos()
@@ -37,7 +39,7 @@ namespace ForestGuardian.Services
 
         public async Task Adicionar(OcorrenciaInputModel model, Guid idUsuario)
         {
-            var entity = new Ocorrencia(model.Titulo, model.Descricao, model.Latitude, model.Longitude, idUsuario);
+            var entity = new Ocorrencia(model.Titulo, model.Descricao, model.Latitude, model.Longitude, _userService.GetUserId());
             await _unitOfWork.OcorrenciaRepository.Incluir(entity);
         }
 

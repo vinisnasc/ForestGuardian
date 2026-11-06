@@ -1,18 +1,31 @@
-﻿namespace ForestGuardian.API.Configuration;
+﻿using Microsoft.OpenApi;
 
-    public static class SwaggerConfiguration
+namespace ForestGuardian.API.Configuration;
+
+public static class SwaggerConfiguration
+{
+    public static IServiceCollection AddSwaggerConfiguration(this IServiceCollection services)
     {
-        public static IServiceCollection AddSwaggerConfiguration(this IServiceCollection services)
+        services.AddSwaggerGen(c =>
         {
-            services.AddSwaggerGen(c =>
+            c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
             {
-                c.SwaggerDoc("v1", new Microsoft.OpenApi.OpenApiInfo
-                {
-                    Title = "Identificacao Consulta",
-                    Description = "API de gerenciamento de login do projeto ForestGuardian"
-                });
+                Description = "Insira o token JWT desta maneira: Bearer {seu token}",
+                Name = "Authorization",
+                Scheme = "Bearer",
+                BearerFormat = "JWT",
+                In = ParameterLocation.Header,
+                Type = SecuritySchemeType.ApiKey
             });
 
-            return services;
-        }
+            c.AddSecurityRequirement(document => new OpenApiSecurityRequirement
+            {
+                [new OpenApiSecuritySchemeReference("Bearer", document)] =
+                    new List<string>()
+            });
+        });
+
+        return services;
     }
+
+}

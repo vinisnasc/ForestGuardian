@@ -24,6 +24,10 @@ public static class DependencyInjectionConfiguration
     {
         services.AddScoped<IOcorrenciaService, OcorrenciaService>();
         services.AddScoped<INotificator, Notificator>();
+
+        services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+        services.AddScoped<IUserService, UserService>();
+
         return services;
     }
 

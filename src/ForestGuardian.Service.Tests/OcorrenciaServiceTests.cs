@@ -1,5 +1,7 @@
 ﻿using ForestGuardian.Domain.Interfaces.Infra;
+using ForestGuardian.Domain.Interfaces.Service;
 using ForestGuardian.Domain.Models;
+using ForestGuardian.Domain.Models.InputModels;
 using ForestGuardian.Domain.Tests;
 using ForestGuardian.Services;
 using Moq;
@@ -25,12 +27,15 @@ public class OcorrenciaServiceTests
         // Arrange
         var ocorrencia = _ocorrenciaFixture.GerarOcorrenciaValida();
         var unitOfWorkMock = new Mock<IUnitOfWork>();
+        var notificadorMock = new Mock<INotificator>();
+        var usuarioServiceMock = new Mock<IUserService>();
+        usuarioServiceMock.Setup(x => x.GetUserId()).Returns(Guid.NewGuid());
         unitOfWorkMock.Setup(x => x.OcorrenciaRepository.Incluir(It.IsAny<ForestGuardian.Domain.Entities.Ocorrencia>()));
-        var ocorrenciaService = new OcorrenciaService(unitOfWorkMock.Object);
+        var ocorrenciaService = new OcorrenciaService(notificadorMock.Object ,unitOfWorkMock.Object, usuarioServiceMock.Object);
         var model = new OcorrenciaInputModel(ocorrencia.Titulo, ocorrencia.Descricao, ocorrencia.Coordenadas.Latitude, ocorrencia.Coordenadas.Longitude);
         
         // Act
-        ocorrenciaService.Adicionar(model, ocorrencia.IdUsuarioAberturaOcorrencia);
+        await ocorrenciaService.Adicionar(model, ocorrencia.IdUsuarioAberturaOcorrencia);
 
         // Assert
         unitOfWorkMock.Verify(x => x.OcorrenciaRepository.Incluir(It.IsAny<ForestGuardian.Domain.Entities.Ocorrencia>()), Times.Once);
